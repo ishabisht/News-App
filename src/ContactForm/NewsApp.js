@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import NewsItem from "../NewsItem";
 import PropTypes from 'prop-types';
 import { Link } from "react-router-dom";
-
+const API_KEY = "523c5fdad241468f9c1489ad7d58f1e8";
 class NewsApp extends Component {
     static defaultProps = {
         category: "general",
@@ -30,30 +30,43 @@ class NewsApp extends Component {
         console.log("fsda");
     }
     async componentDidMount() {
-        console.log(this.props.country)
-        let data = await fetch(`https://newsapi.org/v2/top-headlines?country=${this.props.country}&category=${this.props.category}&apiKey=a5e79bb0b4d346e2908d1f6cca2c1504`);
-        let parseData = await data.json();
+        try {
+            const { country, category } = this.props;
+            const url = `https://newsapi.org/v2/top-headlines?country=${country}&category=${encodeURIComponent(category)}&apiKey=${API_KEY}`;
+            
+            const response = await fetch(url);
+            const parseData = await response.json();
 
-        this.setState({ articles: parseData.articles });
-        console.log(parseData)
-
+            this.setState({ articles: parseData.articles });
+        } catch (error) {
+            console.error("Error fetching news:", error);
+        }
     }
+
     async previosHandler() {
-        this.setState({
-            page: this.state.page - 1
-        })
-        let data = await fetch(`https://newsapi.org/v2/everything?domains=wsj.com&apiKey=a5e79bb0b4d346e2908d1f6cca2c1504&page=${this.state.page}&pageSize=10`);
-        let parseData = await data.json();
-        this.setState({ articles: parseData.articles });
-
+        this.setState({ page: this.state.page - 1 });
+        this.fetchNews();
     }
+
     async nextHandler() {
-        this.setState({
-            page: this.state.page + 1
-        })
-        let data = await fetch(`https://newsapi.org/v2/everything?domains=wsj.com&apiKey=a5e79bb0b4d346e2908d1f6cca2c1504&page=${this.state.page}&pageSize=10`);
-        let parseData = await data.json();
-        this.setState({ articles: parseData.articles });
+        this.setState({ page: this.state.page + 1 });
+        this.fetchNews();
+    }
+
+    async fetchNews() {
+        try {
+            const { country, category } = this.props;
+            const { page } = this.state;
+
+            const url = `https://newsapi.org/v2/top-headlines?country=${country}&category=${encodeURIComponent(category)}&page=${page}&apiKey=${API_KEY}`;
+
+            const response = await fetch(url);
+            const parseData = await response.json();
+
+            this.setState({ articles: parseData.articles });
+        } catch (error) {
+            console.error("Error fetching news:", error);
+        }
     }
 
     render() {
