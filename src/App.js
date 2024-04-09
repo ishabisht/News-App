@@ -1,11 +1,10 @@
 import React, { Component } from 'react'
 import NavBar from './ContactForm/NavBar'
-import NewsItem from './NewsItem'
+
 import NewsApp from './ContactForm/NewsApp'
 import {
   Routes,
   Route,
-  Link,
   BrowserRouter as Router
 } from 'react-router-dom';
 import Contact from './ContactForm/Contact';
